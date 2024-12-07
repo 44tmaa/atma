@@ -1,4 +1,21 @@
 import 'package:flutter/material.dart';
+import 'fourth.dart';
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'FirstPage',
+      initialRoute: '/',
+      routes: {
+        '/plus': (context) => const Add2Page(),
+      },
+    );
+  }
+}
 
 class Add2Page extends StatefulWidget {
   const Add2Page({super.key});
@@ -8,10 +25,11 @@ class Add2Page extends StatefulWidget {
 }
 
 class _Add2PageState extends State<Add2Page> {
-  final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
+    // Get the screen dimensions
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -20,8 +38,7 @@ class _Add2PageState extends State<Add2Page> {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Add Product'),
-        
+        title: const Text('Food Table'),
         actions: const [
           IconButton(
             icon: Icon(Icons.person),
@@ -29,66 +46,134 @@ class _Add2PageState extends State<Add2Page> {
           ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Nama Produk',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a product name';
-                  }
-                  return null;
-                },
+      body: Padding(
+        padding: const EdgeInsets.all(8.0), // Reduced padding
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/plusadd');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0, vertical: 12.0), // Adjusted padding
+                textStyle: const TextStyle(
+                    fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Harga',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a price';
-                  }
-                  return null;
-                },
+              child: const Text('Add Data +'),
+            ),
+            const SizedBox(height: 10.0), // Reduced space
+            SingleChildScrollView( // Allow scrolling if the content is too large
+              scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+              child: DataTable(
+                columns: const [
+                  DataColumn(label: Text('Foto')),
+                  DataColumn(label: Text('Nama Produk')),
+                  DataColumn(label: Text('Harga')),
+                  DataColumn(label: Text('Aksi')),
+                ],
+                rows: [
+                  DataRow(
+                    cells: [
+                      DataCell(
+                        Image.asset(
+                          'assets/mie.jpg',
+                          width: 30, // Increased size for better visibility
+                          height: 30,
+                        ),
+                      ),
+                      DataCell(
+                        SizedBox(
+                          width: 100, // Set a fixed width for the text
+                          child: Text(
+                            'Mie',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                      ),
+                      const DataCell(Text('Rp.50.000,00')),
+                      DataCell(
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            // Implement delete action
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  DataRow(
+                    cells: [
+                      DataCell(
+                        Image.asset(
+                          'assets/TehBotol.jpg',
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                      DataCell(
+                        SizedBox(
+                          width: 100, // Set a fixed width for the text
+                          child: Text(
+                            'Teh Botol',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                      ),
+                      const DataCell(Text('Rp.4.000,00')),
+                      DataCell(
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            // Implement delete action
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  DataRow(
+                    cells: [
+                      DataCell(
+                        Image.asset(
+                          'assets/Burger.jpg',
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                      DataCell(
+                        SizedBox(
+                          width: 100, // Set a fixed width for the text
+                          child: Text(
+                            'Burger Small',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                      ),
+                      const DataCell(Text('Rp.35.000,00')),
+                      DataCell(
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            // Implement delete action
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              const SizedBox(height: 16.0),
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Kategori Produk',
-                ),
-                value: 'Makanan',
-                items: <String>['Makanan', 'Minuman', 'Lainnya']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
- // Do something with the selected value
-                },
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // If the form is valid, then save the data
-                    // You can also use `Navigator.push` to navigate to another page
-                  }
-                },
-                child: const Text('Add Product'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
       ),
     );
   }
